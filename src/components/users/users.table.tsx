@@ -4,6 +4,7 @@ import { IUser } from "@/types/backend"
 import { Table } from "antd"
 import type { TableProps } from 'antd'
 import { usePathname, useSearchParams, useRouter } from "next/navigation"
+import { useEffect, useState } from "react"
 
 interface IProps {
   users: IUser[] | [];
@@ -15,11 +16,17 @@ interface IProps {
 }
 
 function UsersTable(props: IProps) {
+  const [isLoading, setIsLoading] = useState<boolean>(false)
+
   const { users, meta } = props
 
   const searchParams = useSearchParams()
   const pathname = usePathname()
   const { replace } = useRouter()
+
+  useEffect(() => {
+    if (users) setIsLoading(false)
+  }, [users])
 
   const columns: TableProps<IUser>['columns'] = [
     {
@@ -41,12 +48,14 @@ function UsersTable(props: IProps) {
       const params = new URLSearchParams(searchParams)
       params.set('page', pagination.current)
       replace(`${pathname}?${params.toString()}`)
+      setIsLoading(true)
     }
   }
 
   return (
     <div>
       <Table
+        loading={isLoading}
         rowKey='id'
         dataSource={users}
         columns={columns}
