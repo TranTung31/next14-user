@@ -7,13 +7,14 @@ const UserPage = async (props: any) => {
     return totalCount < pageSize ? 1 : Math.ceil(totalCount / pageSize)
   }
 
-  const LIMIT = 1
+  const LIMIT = 5
   const PAGE = searchParams?.page ?? 1
 
   // Fetching data ở phía server, sau đó truyền data xuống component con UsersTable
   // Component UsersTable chỉ nhận data và xử lý logic (Không fetching data ở phía client)
   const res = await fetch(`http://localhost:8000/users?_page=${PAGE}&_limit=${LIMIT}`, {
-    method: 'GET'
+    method: 'GET',
+    next: { tags: ['list-users'] }
   })
 
   // Dấu + giúp biến string thành number
